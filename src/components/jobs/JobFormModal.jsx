@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "../../api/axios";
+import toast from "react-hot-toast";
 
 const JobFormModal = ({ close, refresh, job }) => {
   const [formData, setFormData] = useState({
@@ -11,6 +12,7 @@ const JobFormModal = ({ close, refresh, job }) => {
     resumeUsed: job?.resumeUsed?._id || ""
   });
 
+  const [loading, setLoading] = useState(false);
   const [resumes, setResumes] = useState([]);
 
   useEffect(() => {
@@ -23,13 +25,25 @@ const JobFormModal = ({ close, refresh, job }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (job) {
-      await axios.put(`/jobs/${job._id}`, formData);
-    } else {
-      await axios.post("/jobs/create", formData);
+    setLoading(true);
+    try {
+      if (job) {
+        await axios.put(`/jobs/${job._id}`, formData);
+        toast.success("Job updated successfully");
+      } else {
+        await axios.post("/jobs/create", formData);
+        toast.success("Job created successfully");
+      }
+
+      refresh();
+      close();
+
+    } catch (error) {
+      toast.error("Something went wrong");
     }
-    refresh();
-    close();
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -96,9 +110,10 @@ const JobFormModal = ({ close, refresh, job }) => {
 
             <button
               type="submit"
+              disabled={loading}
               className="px-3 py-1 bg-blue-600 text-white rounded"
             >
-              Save
+              {loading ? "Saving..." : "Save"}
             </button>
           </div>
 

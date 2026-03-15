@@ -1,12 +1,18 @@
 import axios from "../../api/axios";
+import toast from "react-hot-toast";
 
-const JobCard = ({ job, refresh,openEdi }) => {
+const JobCard = ({ job, refresh, openEdi }) => {
 
   const handleDelete = async () => {
     if (!window.confirm("Delete this job?")) return;
 
-    await axios.delete(`/jobs/${job._id}`);
-    refresh();
+    try {
+      await axios.delete(`/jobs/${job._id}`);
+      toast.success("Job deleted successfully");
+      refresh();
+    } catch (error) {
+      toast.error("Failed to delete job");
+    }
   };
 
   return (
@@ -36,14 +42,14 @@ const JobCard = ({ job, refresh,openEdi }) => {
         >
           Edit
         </button>
-        
+
         <button
           onClick={handleDelete}
           className="text-red-500 text-sm hover:underline"
         >
           Delete
         </button>
-        
+
       </div>
 
     </div>
