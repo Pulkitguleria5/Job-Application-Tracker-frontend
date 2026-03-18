@@ -11,6 +11,8 @@ const JobFormModal = ({ close, refresh, job }) => {
     role: job?.role || "",
     status: job?.status || "Applied",
     jobUrl: job?.jobUrl || "",
+    location: job?.location || "",
+    jobType: job?.jobType || "",
     salaryRange: job?.salaryRange || "",
     notes: job?.notes || "",
     appliedDate: job?.appliedDate ? job.appliedDate.slice(0, 10) : "",
@@ -32,12 +34,19 @@ const JobFormModal = ({ close, refresh, job }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Strip empty optional fields — sending "" for an enum field fails Mongoose validation
+    const payload = { ...formData };
+    if (!payload.jobType)    delete payload.jobType;
+    if (!payload.resumeUsed) delete payload.resumeUsed;
+    if (!payload.jobUrl)     delete payload.jobUrl;
+
     try {
       if (job) {
-        await axios.put(`/jobs/${job._id}`, formData);
+        await axios.put(`/jobs/${job._id}`, payload);
         toast.success("Job updated");
       } else {
-        await axios.post("/jobs/create", formData);
+        await axios.post("/jobs/create", payload);
         toast.success("Job added");
       }
       refresh();
@@ -88,6 +97,25 @@ const JobFormModal = ({ close, refresh, job }) => {
           <div>
             <label className={labelClass}>Job URL</label>
             <input type="url" placeholder="https://..." className={inputClass} value={formData.jobUrl} onChange={set("jobUrl")} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Location</label>
+              <input placeholder="e.g. Bangalore / Remote" className={inputClass} value={formData.location} onChange={set("location")} />
+            </div>
+            <div>
+              <label className={labelClass}>Job Type</label>
+              <select className={inputClass} value={formData.jobType} onChange={set("jobType")}>
+                <option value="">— Select —</option>
+                <option>Full-time</option>
+                <option>Part-time</option>
+                <option>Internship</option>
+                <option>Contract</option>
+                <option>Remote</option>
+                <option>Hybrid</option>
+              </select>
+            </div>
           </div>
 
           <div>

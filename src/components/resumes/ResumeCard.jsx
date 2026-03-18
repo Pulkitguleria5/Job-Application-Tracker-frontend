@@ -6,6 +6,9 @@ import RenameResumeModal from "./RenameResumeModal";
 const ResumeCard = ({ resume, refresh }) => {
   const [renameModal, setRenameModal] = useState(false);
 
+  // Use Google Docs Viewer to display the PDF in-browser (avoids Cloudinary raw file limitations)
+  const viewUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(resume.fileUrl)}`;
+
   const handleDelete = async () => {
     if (!window.confirm("Delete this resume?")) return;
     try {
@@ -40,7 +43,7 @@ const ResumeCard = ({ resume, refresh }) => {
 
       <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
         <a
-          href={resume.fileUrl}
+          href={viewUrl}
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors"

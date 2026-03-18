@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "../api/axios";
-import JobCard from "../components/jobs/jobCard";
+import JobCard from "../components/jobs/JobCard";
 import JobFilters from "../components/jobs/JobFilters";
 import Pagination from "../components/jobs/Pagination";
 import JobFormModal from "../components/jobs/JobFormModal";
@@ -31,6 +31,15 @@ export default function Jobs() {
 
   useEffect(() => { fetchJobs(); }, [page, filters]);
 
+  // Auto-refresh when user returns to this tab (e.g. after saving via extension)
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") fetchJobs();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [page, filters]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -55,9 +64,9 @@ export default function Jobs() {
       <JobFilters filters={filters} setFilters={setFilters} />
 
       {loading ? (
-        <div className="space-y-3">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-200 rounded-xl animate-pulse" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-56 bg-slate-200 rounded-xl animate-pulse" />
           ))}
         </div>
       ) : jobs.length === 0 ? (
@@ -70,7 +79,7 @@ export default function Jobs() {
           <p className="text-slate-400 text-sm mt-1">Add your first job application to get started</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {jobs.map((job) => (
             <JobCard key={job._id} job={job} refresh={fetchJobs} openEdit={setEditingJob} />
           ))}
