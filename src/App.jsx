@@ -6,7 +6,7 @@ import { PublicRoute } from "./routes/PublicRoute";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/DashBoard";
+import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
 import Resumes from "./pages/Resumes";
 
