@@ -27,5 +27,4 @@ package-lock.json
 .env.*
 .env
 
-postcss.config.js
-tailwind.config.js
+
