@@ -33,8 +33,11 @@ const JobCard = ({ job, refresh, openEdit }) => {
       await axios.delete(`/jobs/${job._id}`);
       toast.success("Job deleted");
       refresh();
-    } catch {
-      toast.error("Failed to delete job");
+    } catch (error) {
+      const msg = error.response?.data?.errors?.[0]?.message 
+               || error.response?.data?.message 
+               || "Failed to delete job";
+      toast.error(msg);
     }
   };
 

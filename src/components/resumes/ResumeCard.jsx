@@ -7,7 +7,9 @@ const ResumeCard = ({ resume, refresh }) => {
   const [renameModal, setRenameModal] = useState(false);
 
   // Use Google Docs Viewer to display the PDF in-browser (avoids Cloudinary raw file limitations)
-  const viewUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(resume.fileUrl)}`;
+  // For existing resumes uploaded as 'raw', swap to 'image' path so browser renders inline.
+  // New uploads with resource_type:'auto' already use /image/upload/ and work directly.
+  const viewUrl = `http://localhost:5002/resume/view/${resume._id}`;
 
   const handleDelete = async () => {
     if (!window.confirm("Delete this resume?")) return;
@@ -15,8 +17,11 @@ const ResumeCard = ({ resume, refresh }) => {
       await axios.delete(`/resume/${resume._id}`);
       toast.success("Resume deleted");
       refresh();
-    } catch {
-      toast.error("Delete failed");
+    } catch (error) {
+      const msg = error.response?.data?.errors?.[0]?.message 
+               || error.response?.data?.message 
+               || "Delete failed";
+      toast.error(msg);
     }
   };
 

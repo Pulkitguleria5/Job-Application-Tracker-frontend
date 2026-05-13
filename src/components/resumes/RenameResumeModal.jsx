@@ -15,8 +15,11 @@ const RenameResumeModal = ({ resume, close, refresh }) => {
       toast.success("Resume renamed successfully");
       refresh();
       close();
-    } catch {
-      toast.error("Rename failed. Please try again.");
+    } catch (error) {
+      const msg = error.response?.data?.errors?.[0]?.message 
+               || error.response?.data?.message 
+               || "Rename failed. Please try again.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

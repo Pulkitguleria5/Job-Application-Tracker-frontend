@@ -51,8 +51,11 @@ const JobFormModal = ({ close, refresh, job }) => {
       }
       refresh();
       close();
-    } catch {
-      toast.error("Something went wrong");
+    } catch (error) {
+      const msg = error.response?.data?.errors?.[0]?.message 
+               || error.response?.data?.message 
+               || "Something went wrong";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
